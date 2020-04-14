@@ -1,19 +1,12 @@
 <template>
-  <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
-    <!-- <el-input type="text" v-model="myname"></el-input> -->
-    <el-form :model="form">
-      <el-form-item label="item1">
-        <el-input v-model="form.familyName" placeholder="请输入内容"></el-input>
-      </el-form-item>
-      <el-form-item label="item2">
-        <el-input v-model="form.uid" placeholder="请输入内容"></el-input>
-      </el-form-item>
-      <el-form-item label="item3">
-        <el-input v-model="form.nickName" placeholder="请输入内容"></el-input>
-      </el-form-item>
-    </el-form>
-    <el-button @click="submitForm">提交</el-button>
+  <div class="memberContainer">
+    <el-collapse v-model="activeNames" @change="handleChange">
+      <el-collapse-item title="一致性 Consistency" name="1">
+        <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+      </el-collapse-item>
+    </el-collapse>
+    <!-- <el-button @click="submitForm">提交</el-button> -->
   </div>
 </template>
 
@@ -30,6 +23,7 @@ interface Form {
   name: "Home"
 })
 export default class Home extends Vue {
+  private activeNames = ["1"];
   private myname = "嘻嘻哈哈";
   private form: Form = {
     familyName: "zzyFamily",
@@ -43,7 +37,9 @@ export default class Home extends Vue {
     return this.myname.length;
   }
 
- 
+  handleChange(val: string) {
+    console.log(val);
+  }
 
   // @Watch("myNameLength")
   // getmyNameLength(ov: number, nv: number) {
@@ -53,3 +49,8 @@ export default class Home extends Vue {
   // }
 }
 </script>
+
+<style lang="less">
+.memberContainer {
+}
+</style>

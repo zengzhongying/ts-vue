@@ -1,16 +1,18 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link>|
-      <router-link to="/about">About</router-link>
-    </div>
+    <Header></Header>
     <router-view />
   </div>
 </template>
 
 <script lang="ts">
+import Header from "./components/Header.vue";
 import { Vue, Component /*, Watch*/ } from "vue-property-decorator";
-@Component({})
+@Component({
+  components: {
+    Header
+  }
+})
 export default class App extends Vue {}
 </script>
 
