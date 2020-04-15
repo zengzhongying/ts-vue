@@ -1,19 +1,6 @@
 <template>
   <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
-    <!-- <el-input type="text" v-model="myname"></el-input> -->
-    <el-form :model="form">
-      <el-form-item label="item1">
-        <el-input v-model="form.familyName" placeholder="请输入内容"></el-input>
-      </el-form-item>
-      <el-form-item label="item2">
-        <el-input v-model="form.uid" placeholder="请输入内容"></el-input>
-      </el-form-item>
-      <el-form-item label="item3">
-        <el-input v-model="form.nickName" placeholder="请输入内容"></el-input>
-      </el-form-item>
-    </el-form>
-    <el-button @click="submitForm">提交</el-button>
+    <h1>这里做宣传首页</h1>
   </div>
 </template>
 
@@ -42,8 +29,6 @@ export default class Home extends Vue {
   get myNameLength(): number {
     return this.myname.length;
   }
-
- 
 
   // @Watch("myNameLength")
   // getmyNameLength(ov: number, nv: number) {

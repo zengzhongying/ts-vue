@@ -7,13 +7,18 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
   {
     path: "/",
-    name: "Home",
+    name: "首页",
     component: () => import("../views/Home.vue")
   },
   {
     path: "/member",
-    name: "MemberInfo",
+    name: "成员列表",
     component: () => import("../views/MemberInfo.vue")
+  },
+  {
+    path: "/addMember",
+    name: "新增成员",
+    component: () => import("../views/addMember.vue")
   },
   {
     path: "/about",
