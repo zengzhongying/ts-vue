@@ -1,8 +1,8 @@
 <template>
   <div class="addMember">
-    <el-form label-position="right" label-width="100px" :model="form">
-      <el-form-item label="uid:">
-        <el-input-number @blur="uidBlur" class="w200" v-model="form.uid" :step="1"></el-input-number>
+    <el-form label-position="right" label-width="100px" :model="form" :rules="rules" ref="ruleForm">
+      <el-form-item label="uid:" prop="uid">
+        <el-input-number @blur="uidBlur" class="w200 my-input-number" v-model="form.uid" :step="1"></el-input-number>
       </el-form-item>
       <el-form-item label="昵称:">
         <el-input class="w200" disabled v-model="form.userName"></el-input>
@@ -10,11 +10,11 @@
       <el-form-item label="忍阶:">
         <el-input class="w200" disabled v-model="form.level"></el-input>
       </el-form-item>
-      <el-form-item label="序号:">
-        <el-input-number :min="0" :max="100" class="w200" v-model="form.sortNumber" :step="1"></el-input-number>
+      <el-form-item label="序号:" prop="sortNumber">
+        <el-input-number :min="0" :max="100" class="w200 my-input-number" v-model="form.sortNumber" :step="1"></el-input-number>
       </el-form-item>
-      <el-form-item label="积分:">
-        <el-input-number class="w200" v-model="form.integral" :step="1"></el-input-number>
+      <el-form-item label="积分:" prop="integral">
+        <el-input-number class="w200 my-input-number" v-model="form.integral" :step="1"></el-input-number>
       </el-form-item>
       <el-form-item label="管理:">
         <el-select class="w200" v-model="form.isAdmin" placeholder="请选择">
@@ -61,10 +61,17 @@ export default class Home extends Vue {
     isAdmin: false,
     integralDetail: []
   };
+  private rules: object = {
+    uid: [{ required: true, message: "请输入Uid", trigger: "blur" }],
+    sortNumber: [
+      { required: true, message: "请输入族员序号", trigger: "blur" }
+    ],
+    integral: [{ required: true, message: "请输入积分", trigger: "blur" }]
+  };
 
   async uidBlur() {
     if (this.form.uid != undefined) {
-      let res: any = await Service.getUserName(this.form.uid);
+      const res: any = await Service.getUserName(this.form.uid);
       if (res.success) {
         this.form.userName = res.data.name;
         this.form.level = res.data.title;
@@ -72,35 +79,38 @@ export default class Home extends Vue {
     }
   }
 
-  async addMember() {
-    this.btnLoading = true;
-    let res: any = await Service.addMember(this.form);
-    if (res.success) {
-      this.$message.success({
-        message: "添加成功",
-        center: true,
-        offset: 200
-      });
-      this.btnLoading = false;
-      this.form = {
-        uid: undefined,
-        userName: "",
-        level: "",
-        sortNumber: undefined,
-        integral: undefined,
-        isApplySS: false,
-        password: "123456789",
-        isAdmin: false,
-        integralDetail: []
-      };
-    } else {
-      this.$message.error({
-        message: "添加失败" + res.msg,
-        center: true,
-        offset: 200
-      });
-      this.btnLoading = false;
-    }
+  addMember() {
+    (this.$refs["ruleForm"] as HTMLFormElement).validate((valid: boolean) => {
+      if (valid) {
+        this.btnLoading = true;
+        Service.addMember(this.form).then((res: any) => {
+          if (res.success) {
+            this.$message.success({
+              message: "添加成功",
+              center: true
+            });
+            this.btnLoading = false;
+            this.form = {
+              uid: undefined,
+              userName: "",
+              level: "",
+              sortNumber: undefined,
+              integral: undefined,
+              isApplySS: false,
+              password: "123456789",
+              isAdmin: false,
+              integralDetail: []
+            };
+          } else {
+            this.$message.error({
+              message: "添加失败" + res.msg,
+              center: true
+            });
+            this.btnLoading = false;
+          }
+        });
+      }
+    });
   }
   // @Watch("myNameLength")
   // getmyNameLength(ov: number, nv: number) {
@@ -113,7 +123,7 @@ export default class Home extends Vue {
 
 <style lang="less">
 .addMember {
-  margin-top: 20px;
+  padding-top: 20px;
   .btn-container {
     padding: 20px 10px;
     .btn {

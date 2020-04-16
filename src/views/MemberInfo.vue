@@ -3,15 +3,26 @@
     <el-collapse v-model="activeNames" @change="handleChange">
       <el-collapse-item :key="0" :name="0" title="操作">
         <div class="operation">
-          <el-form :inline="true" :model="form" class="demo-form-inline">
+          <el-form :inline="true" :model="searchForm" class="demo-form-inline">
             <el-form-item label="序号:">
-              <el-input-number class="w50 mr10" v-model="form.sortNumber" :step="1"></el-input-number>
+              <el-input-number
+                class="w50 mr10 my-input-number"
+                v-model="searchForm.sortNumber"
+                :step="1"
+                :min="1"
+                :max="100"
+              ></el-input-number>
             </el-form-item>
             <el-form-item label="uid:">
-              <el-input-number class="w100 mr10" v-model="form.uid" :step="1"></el-input-number>
+              <el-input-number
+                class="w100 mr10 my-input-number"
+                v-model="searchForm.uid"
+                :step="1"
+                :min="0"
+              ></el-input-number>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="search">查询</el-button>
+              <el-button type="primary" @click="getMemberList">查询</el-button>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="addMember">添加成员</el-button>
@@ -25,8 +36,10 @@
             {{`${item.sortNumber}-${item.userName}`}}
             <span
               style="color: #409EFF;"
-              class="fr mr10"
+              class="fr mr10 curp"
+              @click.stop="editMember(item.uid)"
             >编辑</span>
+            <span style="color: red;" class="fr mr10 curp" @click.stop="delMember(item.uid)">删除</span>
           </div>
         </template>
         <ul class="first-item">
@@ -53,12 +66,17 @@
           <li>
             <span>积分详情:</span>
             <ul class="second-item">
-              <li class="color-green">家族战帅的一比 +5</li>
-              <li class="color-green">家族战帅的一比 +5</li>
-              <li class="color-green">ss+猛男 +5</li>
+              <p style="color: #999" v-if="item.integralDetail.length == 0">暂无明细</p>
+              <li
+                v-else
+                :key="key"
+                v-for="(i, key) in item.integralDetail"
+                :class="i.mark > 0 ? 'color-green' : 'color-red'"
+              >{{`${i.mark > 0 ? '+' : ''}${i.mark} ${i.desc}`}}</li>
             </ul>
           </li>
         </ul>
+        <el-form></el-form>
       </el-collapse-item>
     </el-collapse>
     <!-- <el-button @click="submitForm">提交</el-button> -->
@@ -73,34 +91,60 @@ import Service from "../api/member";
   name: "MemberInfo"
 })
 export default class Home extends Vue {
-  private activeNames = [];
-  private form = {
+  private activeNames: Array<number> = [];
+  private searchForm = {
     sortNumber: undefined,
     uid: undefined
   };
   private memberList: any = [];
-  async mounted() {
-    this.memberList = await Service.getMemberList();
-    // let res = await Service.getUserName(311484178);
-    // let res2 = await Service.addMember({
-    //   uid: 12345678,
-    //   userName: "夜の小喵",
-    //   level: "極忍",
-    //   sortNumber: 31,
-    //   integral: 50,
-    //   isApplySS: false,
-    //   password: "123",
-    //   isAdmin: false,
-    //   integralDetail: []
-    // });
+  async getMemberList() {
+    this.memberList = await Service.getMemberList(this.searchForm);
   }
-
-  search() {
-    console.log(this.form, "form!");
+  async mounted() {
+    this.getMemberList();
   }
   addMember() {
     this.$router.push({
       path: "/addMember"
+    });
+  }
+  delMember(uid: number) {
+    this.$confirm("确定删除该族员", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+      center: true
+    })
+      .then(() => {
+        Service.delMember({ uid: uid }).then((res: any) => {
+          if (res.success) {
+            this.$message({
+              type: "success",
+              message: "删除成功!",
+              duration: 1000
+            });
+            this.getMemberList();
+          } else {
+            this.$message({
+              type: "error",
+              message: "删除失败" + res.msg,
+              duration: 1000
+            });
+          }
+        });
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消删除",
+          duration: 1000
+        });
+      });
+  }
+  editMember(uid: string) {
+    this.$router.push({
+      path: "/editMember",
+      query: { uid: uid }
     });
   }
   handleChange(val: string) {

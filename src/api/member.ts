@@ -10,8 +10,20 @@ const getMemberList = (query: object = {}) => {
 const addMember = (params: object = {}) => {
   return api.Post("member/add", params);
 }
+
+const delMember = (params: object = {}) => {
+  return api.Post("member/delete", params);
+}
+
+const editMember = (params: object = {}) => {
+  return api.Post("member/edit", params);
+}
+
+
 export default {
   getUserName,
   getMemberList,
-  addMember
+  addMember,
+  delMember,
+  editMember
 }

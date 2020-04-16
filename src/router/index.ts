@@ -21,6 +21,11 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/addMember.vue")
   },
   {
+    path: "/editMember",
+    name: "编辑成员信息",
+    component: () => import("../views/editMember.vue")
+  },
+  {
     path: "/about",
     name: "About",
     // route level code-splitting

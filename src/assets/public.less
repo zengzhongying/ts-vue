@@ -4,6 +4,9 @@
 .fr {
   float: right;
 }
+.curp {
+  cursor: pointer;
+}
 .w50 {
   width: 60px !important;
 }
@@ -14,28 +17,28 @@
   width: 200px !important;
 }
 .mt10 {
-  margin-top: 10px;
+  margin-top: 10px !important;
 }
 .mb10 {
-  margin-bottom: 10px;
+  margin-bottom: 10px !important;
 }
 .mt20 {
-  margin-top: 20px;
+  margin-top: 20px !important;
 }
 .mb20 {
-  margin-bottom: 20px;
+  margin-bottom: 20px !important;
 }
 .ml10 {
-  margin-left: 10px;
+  margin-left: 10px !important;
 }
 .mr10 {
-  margin-right: 10px;
+  margin-right: 10px !important;
 }
 .ml20 {
-  margin-left: 20px;
+  margin-left: 20px !important;
 }
 .mr20 {
-  margin-right: 20px;
+  margin-right: 20px !important;
 }
 .color-green {
   color: green;
@@ -47,11 +50,29 @@
 .el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-.el-input-number__increase, .el-input-number__decrease {
-  display: none;
+.my-input-number {
+  .el-input-number__increase, .el-input-number__decrease {
+    display: none;
+  }
+  .el-input__inner {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    text-align: left !important;
+  }
 }
-.el-input-number .el-input__inner {
-  padding-left: 10px !important;
-  padding-right: 10px !important;
-  text-align: left !important;
+
+.el-message {
+  text-align: center !important;
+  top: 30% !important;
+  min-width: 200px !important;
+  justify-content: center !important;
+  width: 80% !important;
+}
+.el-message-box__wrapper {
+  top: 30% !important;
+  width: 80% !important;
+  left: 10% !important;
+}
+.el-message-box {
+  width: 100% !important;
 }
