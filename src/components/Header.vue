@@ -12,26 +12,47 @@
       <p>{{pageName}}</p>
       <img class="menuImg" @click="showMenu" src="../assets/images/menu.png" alt />
     </div>
-    <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false">
-      <ul>
-        <li>首页</li>
-        <li>成员列表</li>
-        <li>SS申请</li>
-        <li>积分规则</li>
-      </ul>
+    <el-drawer
+      class="my-drawer"
+      title="我是标题"
+      :visible.sync="drawer"
+      :with-header="false"
+      size="80%"
+    >
+      <el-card
+        shadow="always"
+        class="my-box-card box-card mb10"
+        :key="index"
+        v-for="(item, index) in menuList"
+        @click.native="pageChange(index)"
+      >{{item}}</el-card>
     </el-drawer>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-
+import { Route } from "vue-router";
 @Component({
   name: "Header"
 })
 export default class HelloWorld extends Vue {
   @Prop() private title!: string;
   private drawer: boolean = false;
+  private menuList: Array<string> = [
+    "首页",
+    "成员列表",
+    "SS申请",
+    "积分规则",
+    "我的"
+  ];
+  mounted() {
+    console.log(localStorage.getItem("familyMember"));
+    const userInfo: any = localStorage.getItem("familyMember")
+      ? localStorage.getItem("familyMember")
+      : "";
+    console.log(JSON.parse(userInfo));
+  }
   private showMenu(): void {
     this.drawer = true;
   }
@@ -39,9 +60,57 @@ export default class HelloWorld extends Vue {
     this.$router.go(-1);
   }
   private goHome(): void {
-    this.$router.push({
-      path: "/"
-    });
+    this.$router
+      .push({
+        path: "/"
+      })
+      .catch(err => {
+        console.log("路由跳转报错", err);
+      });
+  }
+  pageChange(index: number) {
+    switch (index) {
+      case 0:
+        this.goHome();
+        break;
+      case 1:
+        this.$router
+          .push({
+            path: "/member"
+          })
+          .catch(err => {
+            console.log("路由跳转报错", err);
+          });
+        break;
+      case 2:
+        this.$router
+          .push({
+            path: "/ssApply"
+          })
+          .catch(err => {
+            console.log("路由跳转报错", err);
+          });
+        break;
+      case 3:
+        this.$router
+          .push({
+            path: "/integralRule"
+          })
+          .catch(err => {
+            console.log("路由跳转报错", err);
+          });
+        break;
+      case 4:
+        this.$router
+          .push({
+            path: "/my"
+          })
+          .catch(err => {
+            console.log("路由跳转报错", err);
+          });
+        break;
+    }
+    this.drawer = false;
   }
   get pageName() {
     return this.$route.name;

@@ -19,11 +19,16 @@ const editMember = (params: object = {}) => {
   return api.Post("member/edit", params);
 }
 
+const login = (params: object = {}) => {
+  return api.Post("member/login", params);
+}
+
 
 export default {
   getUserName,
   getMemberList,
   addMember,
   delMember,
-  editMember
+  editMember,
+  login
 }

@@ -1,6 +1,10 @@
 <template>
-  <div class="home">
-    <h1>这里做宣传首页</h1>
+  <div class="my">
+    <el-card class="box-card w90p">
+      <div slot="header" class="clearfix">
+        <span>基础信息</span>
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -14,6 +18,12 @@ export default class Home extends Vue {
   private submitForm(): void {
     console.log();
   }
+  mounted() {
+    
+    // if (localStorage.getItem("user")) {
+    // } else {
+    // }
+  }
   // get myNameLength(): number {
   // }
 
@@ -25,3 +35,14 @@ export default class Home extends Vue {
   // }
 }
 </script>
+<style lang="less">
+.my {
+  padding-top: 10px;
+  .box-card {
+    margin: 0 auto;
+    .el-card__header {
+      padding: 10px 20px !important;
+    }
+  }
+}
+</style>

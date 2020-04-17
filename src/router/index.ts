@@ -1,10 +1,14 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 // import Home from "../views/Home.vue";
-
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
+  {
+    path: "/login",
+    name: "成员登录",
+    component: () => import("../views/login.vue")
+  },
   {
     path: "/",
     name: "首页",
@@ -24,6 +28,21 @@ const routes: Array<RouteConfig> = [
     path: "/editMember",
     name: "编辑成员信息",
     component: () => import("../views/editMember.vue")
+  },
+  {
+    path: "/ssApply",
+    name: "SS申请列表",
+    component: () => import("../views/ssList.vue")
+  },
+  {
+    path: "/integralRule",
+    name: "积分规则",
+    component: () => import("../views/integralRule.vue")
+  },
+  {
+    path: "/my",
+    name: "我的",
+    component: () => import("../views/my.vue")
   },
   {
     path: "/about",
