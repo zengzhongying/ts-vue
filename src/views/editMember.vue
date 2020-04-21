@@ -52,8 +52,9 @@
 </template>
 
 <script lang="ts">
-// @ is an alias to /src
-import { Vue, Component /*, Watch*/ } from "vue-property-decorator";
+import Component from "vue-class-component";
+import { State, Getter, Action, Mutation, namespace } from "vuex-class";
+import { Vue /*, Component, Watch*/ } from "vue-property-decorator";
 import Service from "../api/member";
 //構建表單結構體
 interface integralOpreateItem {
@@ -76,6 +77,7 @@ interface Form {
   name: "EditMember"
 })
 export default class Home extends Vue {
+  @State user: any;
   private validateIntegralOpreate: any = (
     rule: any,
     value: any,
@@ -117,6 +119,13 @@ export default class Home extends Vue {
   };
 
   async mounted() {
+    if (!this.isAdmin) {
+      this.$message.warning("你不是管理员");
+      this.$router.replace({
+        path: "/member"
+      });
+      return;
+    }
     const res: any = await Service.getUserName(+this.$route.query.uid);
     if (res.success) {
       this.form.uid = +this.$route.query.uid;
@@ -192,6 +201,13 @@ export default class Home extends Vue {
           });
         }
       }
+    );
+  }
+  get isAdmin(): boolean {
+    console.log(this.user.familyMember, "+++");
+    return (
+      Object.keys(this.user.familyMember).length > 0 &&
+      this.user.familyMember.isAdmin
     );
   }
 }

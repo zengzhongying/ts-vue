@@ -23,7 +23,7 @@ export class Api {
       this.axios.get(url, {
         params: query
       }).then((res: object) => {
-        console.log(typeof (res));
+        // console.log(typeof (res))
         resolve(res);
       }).catch((err: object) => {
         reject(err);

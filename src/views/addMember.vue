@@ -11,7 +11,13 @@
         <el-input class="w200" disabled v-model="form.level"></el-input>
       </el-form-item>
       <el-form-item label="序号:" prop="sortNumber">
-        <el-input-number :min="0" :max="100" class="w200 my-input-number" v-model="form.sortNumber" :step="1"></el-input-number>
+        <el-input-number
+          :min="0"
+          :max="100"
+          class="w200 my-input-number"
+          v-model="form.sortNumber"
+          :step="1"
+        ></el-input-number>
       </el-form-item>
       <el-form-item label="积分:" prop="integral">
         <el-input-number class="w200 my-input-number" v-model="form.integral" :step="1"></el-input-number>
@@ -30,8 +36,9 @@
 </template>
 
 <script lang="ts">
-// @ is an alias to /src
-import { Vue, Component /*, Watch*/ } from "vue-property-decorator";
+import Component from "vue-class-component";
+import { State, Getter, Action, Mutation, namespace } from "vuex-class";
+import { Vue /*, Component, Watch*/ } from "vue-property-decorator";
 import Service from "../api/member";
 //構建表單結構體
 interface Form {
@@ -49,6 +56,7 @@ interface Form {
   name: "Home"
 })
 export default class Home extends Vue {
+  @State user: any;
   private btnLoading = false;
   private form: Form = {
     uid: undefined,
@@ -69,6 +77,15 @@ export default class Home extends Vue {
     integral: [{ required: true, message: "请输入积分", trigger: "blur" }]
   };
 
+  mounted() {
+    if (!this.isAdmin) {
+      this.$message.warning("你不是管理员");
+      this.$router.replace({
+        path: "/member"
+      });
+      return;
+    }
+  }
   async uidBlur() {
     if (this.form.uid != undefined) {
       const res: any = await Service.getUserName(this.form.uid);
@@ -111,6 +128,14 @@ export default class Home extends Vue {
         });
       }
     });
+  }
+
+  get isAdmin(): boolean {
+    console.log(this.user.familyMember, "+++");
+    return (
+      Object.keys(this.user.familyMember).length > 0 &&
+      this.user.familyMember.isAdmin
+    );
   }
   // @Watch("myNameLength")
   // getmyNameLength(ov: number, nv: number) {

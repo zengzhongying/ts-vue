@@ -24,7 +24,7 @@
             <el-form-item>
               <el-button type="primary" @click="getMemberList">查询</el-button>
             </el-form-item>
-            <el-form-item>
+            <el-form-item v-if="isAdmin">
               <el-button type="primary" @click="addMember">添加成员</el-button>
             </el-form-item>
           </el-form>
@@ -35,11 +35,17 @@
           <div style="width: 100%">
             {{`${item.sortNumber}-${item.userName}`}}
             <span
+              v-if="isAdmin"
               style="color: #409EFF;"
               class="fr mr10 curp"
               @click.stop="editMember(item.uid)"
             >编辑</span>
-            <span style="color: red;" class="fr mr10 curp" @click.stop="delMember(item.uid)">删除</span>
+            <span
+              v-if="isAdmin"
+              style="color: red;"
+              class="fr mr10 curp"
+              @click.stop="delMember(item.uid)"
+            >删除</span>
           </div>
         </template>
         <ul class="first-item">
@@ -84,13 +90,15 @@
 </template>
 
 <script lang="ts">
-// @ is an alias to /src
-import { Vue, Component /*, Watch*/ } from "vue-property-decorator";
+import Component from "vue-class-component";
+import { State, Getter, Action, Mutation, namespace } from "vuex-class";
+import { Vue /*, Component, Watch*/ } from "vue-property-decorator";
 import Service from "../api/member";
 @Component({
   name: "MemberInfo"
 })
 export default class Home extends Vue {
+  @State user: any;
   private activeNames: Array<number> = [];
   private searchForm = {
     sortNumber: undefined,
@@ -149,6 +157,14 @@ export default class Home extends Vue {
   }
   handleChange(val: string) {
     console.log(val);
+  }
+
+  get isAdmin(): boolean {
+    console.log(this.user.familyMember, "+++");
+    return (
+      Object.keys(this.user.familyMember).length > 0 &&
+      this.user.familyMember.isAdmin
+    );
   }
 
   // @Watch("myNameLength")

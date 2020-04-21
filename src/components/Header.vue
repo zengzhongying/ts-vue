@@ -12,46 +12,59 @@
       <p>{{pageName}}</p>
       <img class="menuImg" @click="showMenu" src="../assets/images/menu.png" alt />
     </div>
-    <el-drawer
-      class="my-drawer"
-      title="我是标题"
-      :visible.sync="drawer"
-      :with-header="false"
-      size="80%"
-    >
-      <el-card
-        shadow="always"
-        class="my-box-card box-card mb10"
-        :key="index"
-        v-for="(item, index) in menuList"
-        @click.native="pageChange(index)"
-      >{{item}}</el-card>
+    <el-drawer class="my-drawer" :visible.sync="drawer" :with-header="false" size="80%">
+      <div v-if="showMemuList.length > 0">
+        <el-card
+          shadow="always"
+          class="my-box-card box-card mb10"
+          :key="index"
+          v-for="(item, index) in showMemuList"
+          @click.native="pageChange(item.menuName)"
+        >{{item.menuName}}</el-card>
+      </div>
     </el-drawer>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import Component from "vue-class-component";
+import { State, Getter, Action, Mutation, namespace } from "vuex-class";
+import { /*Component, Prop,*/ Vue } from "vue-property-decorator";
 import { Route } from "vue-router";
+interface MenuItem {
+  menuName: string;
+  authentication: boolean;
+}
 @Component({
   name: "Header"
 })
-export default class HelloWorld extends Vue {
-  @Prop() private title!: string;
+export default class Header extends Vue {
+  @Action Set_user: any;
+  // @Getter user: any;
+  @State user: any;
+  private title!: string;
   private drawer: boolean = false;
-  private menuList: Array<string> = [
-    "首页",
-    "成员列表",
-    "SS申请",
-    "积分规则",
-    "我的"
+  private menuList: Array<MenuItem> = [
+    { menuName: "首页", authentication: false },
+    { menuName: "成员列表", authentication: false },
+    { menuName: "SS申请", authentication: true },
+    { menuName: "积分规则", authentication: false },
+    { menuName: "我的", authentication: true }
   ];
+  //只有登录了的才有权限看到的菜单（只有成员才有权限）
+
   mounted() {
-    console.log(localStorage.getItem("familyMember"));
     const userInfo: any = localStorage.getItem("familyMember")
       ? localStorage.getItem("familyMember")
-      : "";
-    console.log(JSON.parse(userInfo));
+      : "{}";
+    const obj: any = JSON.parse(userInfo);
+    this.Set_user(obj);
+    console.log(this.user, "??????????");
+    // console.log(localStorage.getItem("familyMember"));
+    // const userInfo: any = localStorage.getItem("familyMember")
+    //   ? localStorage.getItem("familyMember")
+    //   : "";
+    // console.log(JSON.parse(userInfo));
   }
   private showMenu(): void {
     this.drawer = true;
@@ -68,12 +81,12 @@ export default class HelloWorld extends Vue {
         console.log("路由跳转报错", err);
       });
   }
-  pageChange(index: number) {
-    switch (index) {
-      case 0:
+  pageChange(menuName: string) {
+    switch (menuName) {
+      case "首页":
         this.goHome();
         break;
-      case 1:
+      case "成员列表":
         this.$router
           .push({
             path: "/member"
@@ -82,7 +95,7 @@ export default class HelloWorld extends Vue {
             console.log("路由跳转报错", err);
           });
         break;
-      case 2:
+      case "SS申请":
         this.$router
           .push({
             path: "/ssApply"
@@ -91,7 +104,7 @@ export default class HelloWorld extends Vue {
             console.log("路由跳转报错", err);
           });
         break;
-      case 3:
+      case "积分规则":
         this.$router
           .push({
             path: "/integralRule"
@@ -100,10 +113,19 @@ export default class HelloWorld extends Vue {
             console.log("路由跳转报错", err);
           });
         break;
-      case 4:
+      case "我的":
         this.$router
           .push({
             path: "/my"
+          })
+          .catch(err => {
+            console.log("路由跳转报错", err);
+          });
+        break;
+      case "登录":
+        this.$router
+          .push({
+            path: "/login"
           })
           .catch(err => {
             console.log("路由跳转报错", err);
@@ -124,6 +146,26 @@ export default class HelloWorld extends Vue {
         break;
     }
     return result;
+  }
+  get isLogin(): boolean {
+    console.log(this.user.familyMember, '+++')
+    return Object.keys(this.user.familyMember).length > 0;
+  }
+  get showMemuList(): Array<any> {
+    console.log("是否登录呀：", this.isLogin);
+    if (this.isLogin) {
+      return this.menuList;
+    } else {
+      let list: Array<MenuItem> = [];
+      this.menuList.forEach((item: MenuItem) => {
+        if (!item.authentication) {
+          list.push(item);
+        }
+      });
+      list.push({ menuName: "登录", authentication: true });
+      // console.log(list, ">>>>");
+      return list;
+    }
   }
 }
 </script>

@@ -18,12 +18,23 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { Vue, Component /*, Watch*/ } from "vue-property-decorator";
+import Component from "vue-class-component";
+import { State, Getter, Action, Mutation, namespace } from "vuex-class";
+import { Vue /*, Component, Watch*/ } from "vue-property-decorator";
 import Service from "../api/member";
 @Component({
   name: "Login"
 })
 export default class Login extends Vue {
+  mounted() {
+    //如果用户已经登录，通过url进入到登录界面  则强制跳转到我的信息页面
+    if (localStorage.getItem("familyMember") != undefined) {
+      this.$router.replace({
+        path: "/my"
+      });
+    }
+  }
+  @Action Set_user: any;
   private ruleForm = {
     uid: undefined,
     password: ""
@@ -55,8 +66,12 @@ export default class Login extends Vue {
         Service.login(obj).then((res: any) => {
           if (res.success) {
             this.$message.success("登录成功");
-
             localStorage.setItem("familyMember", JSON.stringify(res.info));
+
+            this.Set_user({ ...res.info });
+            this.$router.replace({
+              path: "/"
+            });
           } else {
             this.$message.error("登录失败");
           }
@@ -70,15 +85,6 @@ export default class Login extends Vue {
   private resetForm(): void {
     (this.$refs["ruleForm"] as HTMLFormElement).resetFields();
   }
-  // get myNameLength(): number {
-  // }
-
-  // @Watch("myNameLength")
-  // getmyNameLength(ov: number, nv: number) {
-  //   if (ov !== nv) {
-  //     console.log(ov, nv, "+++++");
-  //   }
-  // }
 }
 </script>
 
