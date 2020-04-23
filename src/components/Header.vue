@@ -148,7 +148,7 @@ export default class Header extends Vue {
     return result;
   }
   get isLogin(): boolean {
-    console.log(this.user.familyMember, '+++')
+    // console.log(this.user.familyMember, '+++')
     return Object.keys(this.user.familyMember).length > 0;
   }
   get showMemuList(): Array<any> {

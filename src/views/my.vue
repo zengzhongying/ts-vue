@@ -25,6 +25,7 @@
               v-if="userInfo.integralDetail && userInfo.integralDetail.length == 0"
             >暂无明细</p>
             <li
+              class="mb10"
               v-else
               :key="key"
               v-for="(i, key) in userInfo.integralDetail"
@@ -44,19 +45,21 @@
 import Component from "vue-class-component";
 import { State, Getter, Action, Mutation, namespace } from "vuex-class";
 import { Vue /*, Component, Watch*/ } from "vue-property-decorator";
+import Service from "../api/member";
 @Component({
-  name: "Home"
+  name: "My"
 })
 export default class Home extends Vue {
   @Action Set_user: any;
   @State user: any;
 
   private userInfo: object = {};
-  private submitForm(): void {
-    console.log();
-  }
-  mounted() {
-    console.log;
+  async mounted() {
+    let memberRes: any = await Service.getMemberList({
+      uid: this.user.familyMember.uid
+    });
+    localStorage.setItem("familyMember", JSON.stringify(memberRes[0]));
+    this.Set_user({ ...memberRes[0] });
     this.userInfo = this.user.familyMember;
   }
   private loginOut() {

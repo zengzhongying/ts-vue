@@ -12,7 +12,7 @@ export default {
 
   actions: {
     Set_user(context: { commit: Commit }, familyMember: object) {
-      console.log(familyMember, 'action里面')
+      // console.log(familyMember, 'action里面')
       context.commit('Set_user', familyMember);
     },
   }
