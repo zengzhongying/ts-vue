@@ -5,3 +5,8 @@ declare module "*.vue" {
 
 //less文件
 declare module '*.less';
+
+declare module "vue-particles" {
+  let VueParticles: any;
+  export = VueParticles;
+}

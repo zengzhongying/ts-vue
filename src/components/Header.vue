@@ -49,7 +49,8 @@ export default class Header extends Vue {
     { menuName: "成员列表", authentication: false },
     { menuName: "SS申请", authentication: true },
     { menuName: "积分规则", authentication: false },
-    { menuName: "我的", authentication: true }
+    { menuName: "我的", authentication: true },
+    { menuName: "关于作者", authentication: false }
   ];
   //只有登录了的才有权限看到的菜单（只有成员才有权限）
 
@@ -126,6 +127,15 @@ export default class Header extends Vue {
         this.$router
           .push({
             path: "/login"
+          })
+          .catch(err => {
+            console.log("路由跳转报错", err);
+          });
+        break;
+      case "关于作者":
+        this.$router
+          .push({
+            path: "/about"
           })
           .catch(err => {
             console.log("路由跳转报错", err);
