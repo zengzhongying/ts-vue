@@ -154,10 +154,11 @@ export default class Home extends Vue {
         });
       });
   }
-  private addSS(): void {
+  private async addSS() {
     // console.log(this.user.familyMember);
     this.dialogVisible = true;
     this.form.leader = this.user.familyMember;
+    await this.$nextTick();  //等待生成了表单节点后再调用resetFields方法 防止报错
     (this.$refs["ruleForm"] as HTMLFormElement).resetFields();
     // (this.$refs["ruleForm"] as HTMLFormElement).clearValidate();
   }
