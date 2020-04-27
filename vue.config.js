@@ -4,7 +4,7 @@ module.exports = {
     ? './'
     : './',
 
-  outputDir: '/dist',
+  outputDir: '/usr/local/nginx/html',
 
   assetsDir: 'static',
 
