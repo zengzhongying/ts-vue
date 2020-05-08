@@ -1,5 +1,5 @@
 import { Interceptors } from './interceptors';
-const baseUrl = process.env.NODE_ENV == "production" ? "http://193.112.252.25:8111/" : "http://localhost:8999/";
+const baseUrl = process.env.NODE_ENV == "production" ? "http://193.112.252.25:8111/" : "http://localhost:8111/";
 
 
 export class Api {

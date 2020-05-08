@@ -37,6 +37,7 @@
     </el-card>
 
     <el-button type="danger" class="btn" @click="loginOut">注销</el-button>
+    <el-button type="warning" class="btn" @click="resetPwd">重置密码</el-button>
   </div>
 </template>
 
@@ -70,6 +71,8 @@ export default class Home extends Vue {
       path: "/"
     });
   }
+  // 重置密码
+  private resetPwd() {}
 }
 </script>
 <style lang="less">

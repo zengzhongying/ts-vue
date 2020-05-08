@@ -73,7 +73,7 @@ export default class About extends Vue {}
 
 <style lang="less">
 .about {
-  height: 100%;
+  min-height: 100%;
   box-sizing: border-box;
   position: relative;
   background: #000;

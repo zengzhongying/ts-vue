@@ -65,7 +65,11 @@ export default class Login extends Vue {
         };
         Service.login(obj).then((res: any) => {
           if (res.success) {
-            this.$message.success("登录成功");
+            this.$message({
+              type: "success",
+              message: "登录成功",
+              duration: 500
+            });
             localStorage.setItem("familyMember", JSON.stringify(res.info));
 
             this.Set_user({ ...res.info });
