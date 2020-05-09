@@ -16,7 +16,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/",
-    name: "首页",
+    name: "诚招大佬",
     component: () => import("../views/Home.vue")
   },
   {
