@@ -23,6 +23,10 @@ const login = (params: object = {}) => {
   return api.Post("member/login", params);
 }
 
+const resetPwd = (params: object = {}) => {
+  return api.Post("member/resetPwd", params);
+}
+
 
 export default {
   getUserName,
@@ -30,5 +34,6 @@ export default {
   addMember,
   delMember,
   editMember,
-  login
+  login,
+  resetPwd
 }

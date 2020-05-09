@@ -56,13 +56,14 @@ export default class Home extends Vue {
 
   private userInfo: object = {};
   async mounted() {
-    let memberRes: any = await Service.getMemberList({
+    const memberRes: any = await Service.getMemberList({
       uid: this.user.familyMember.uid
     });
     localStorage.setItem("familyMember", JSON.stringify(memberRes[0]));
     this.Set_user({ ...memberRes[0] });
     this.userInfo = this.user.familyMember;
   }
+
   private loginOut() {
     localStorage.removeItem("familyMember");
     //清空vuex中的数据
@@ -72,7 +73,11 @@ export default class Home extends Vue {
     });
   }
   // 重置密码
-  private resetPwd() {}
+  private resetPwd() {
+    this.$router.push({
+      path: "/resetPwd"
+    });
+  }
 }
 </script>
 <style lang="less">

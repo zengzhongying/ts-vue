@@ -10,6 +10,11 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/login.vue")
   },
   {
+    path: "/resetPwd",
+    name: "修改密码",
+    component: () => import("../views/resetPwd.vue")
+  },
+  {
     path: "/",
     name: "首页",
     component: () => import("../views/Home.vue")
