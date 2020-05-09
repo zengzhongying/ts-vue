@@ -21,7 +21,7 @@
       clickMode="repulse"
     ></vue-particles>
 
-    <div :class="isPlaying ? 'musicBtn playing' : 'musicBtn'" @click="changeStatus"></div>
+    <!-- <div :class="isPlaying ? 'musicBtn playing' : 'musicBtn'" @click="changeStatus"></div> -->
   </div>
 </template>
 
