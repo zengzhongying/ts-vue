@@ -1,6 +1,7 @@
 <template>
   <div class="ssList">
     <el-tag type="warning" class="mb10">请不要随意添加SS悬赏，如经发现，扣除相应积分</el-tag>
+    <el-tag type="warning" class="mb10">未在此申请的SS不加积分(需提前2天申请)</el-tag>
     <p v-if="ssList.length == 0" style="color: #999; textAlign: center;">家族暂无SS</p>
     <el-collapse v-model="activeNames" v-else>
       <el-collapse-item :name="index" v-for="(item, index) in ssList" :key="index">
@@ -14,11 +15,22 @@
               @click.stop="ssDone(item)"
             >完成</span>
             <span v-if="isAdmin" class="fr mr10" style="color: red;" @click.stop="ssDel(item)">删除</span>
+            <span class="fr mr10" style="color: blue;" @click.stop="joinSS(item)">申请上车</span>
           </div>
         </template>
         <el-row>
           <el-col class="mb10" :span="12">车头：{{item.leader.sortNumber}}-{{item.leader.userName}}</el-col>
           <el-col class="mb10" :span="12" style="color: green">时间：{{item.time}}</el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <ul>
+              <li>111</li>
+              <li>111</li>
+              <li>111</li>
+              <li>111</li>
+            </ul>
+          </el-col>
         </el-row>
       </el-collapse-item>
     </el-collapse>
@@ -67,6 +79,11 @@ import { State } from "vuex-class";
 import { Vue /*, Component, Watch*/ } from "vue-property-decorator";
 import Service from "../api/ss";
 import moment from "moment";
+interface SSItem {
+  time: string;
+  boss: string;
+  leader: object;
+}
 @Component({
   name: "SSList"
 })
@@ -74,10 +91,10 @@ export default class Home extends Vue {
   @State user: any;
   private activeNames: Array<number> = [];
   private dialogVisible = false;
-  private ssList: any[] = [];
+  private ssList: Array<SSItem> = [];
   private pickerOptions = {
     disabledDate(time: any) {
-      return time.getTime() < Date.now(); //如果没有后面的-8.64e7就是不可以选择今天的
+      return time.getTime() < Date.now() + 24 * 60 * 60 * 1000; //如果没有后面的-8.64e7就是不可以选择今天的
     }
   };
   private form = {
@@ -104,7 +121,7 @@ export default class Home extends Vue {
     }
     this.getSSList();
   }
-  private ssDel(item: object): void {
+  private ssDel(item: SSItem): void {
     this.$confirm("确定删除此SS", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
@@ -129,7 +146,7 @@ export default class Home extends Vue {
         });
       });
   }
-  private ssDone(item: object): void {
+  private ssDone(item: SSItem): void {
     this.$confirm("此SS已由家族成员完成", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
@@ -154,11 +171,27 @@ export default class Home extends Vue {
         });
       });
   }
+  private joinSS(item: SSItem): void {
+    // console.log(this.user, item);
+    // console.log(moment(new Date().getTime()), '???')
+    if (moment(new Date().getTime()) > moment(item.time)) {
+      this.$message.error({
+        message: "此车已经过期了",
+        center: true
+      });
+    }
+    // Service.joinSS({
+    //   uid: this.user.familyMember.uid,
+    //   item: item.leader
+    // }).then(res => {
+    //   console.log(res, "joinres");
+    // });
+  }
   private async addSS() {
     // console.log(this.user.familyMember);
     this.dialogVisible = true;
     this.form.leader = this.user.familyMember;
-    await this.$nextTick();  //等待生成了表单节点后再调用resetFields方法 防止报错
+    await this.$nextTick(); //等待生成了表单节点后再调用resetFields方法 防止报错
     (this.$refs["ruleForm"] as HTMLFormElement).resetFields();
     // (this.$refs["ruleForm"] as HTMLFormElement).clearValidate();
   }
