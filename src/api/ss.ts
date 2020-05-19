@@ -16,8 +16,16 @@ const joinSS = (params: object = {}) => {
   return api.Post("ssList/join", params);
 }
 
+const cancelJoinSS = (params: object = {}) => {
+  return api.Post("ssList/cancelJoinSS", params);
+}
+
 const doneSS = (params: object = {}) => {
   return api.Post("ssList/done", params);
+}
+
+const getMemberList = (query: object = {}) => {
+  return api.Get("member/get", query);
 }
 
 export default {
@@ -25,5 +33,7 @@ export default {
   addSS,
   delSS,
   joinSS,
-  doneSS
+  cancelJoinSS,
+  doneSS,
+  getMemberList
 }

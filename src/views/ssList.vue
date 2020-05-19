@@ -15,7 +15,18 @@
               @click.stop="ssDone(item)"
             >完成</span>
             <span v-if="isAdmin" class="fr mr10" style="color: red;" @click.stop="ssDel(item)">删除</span>
-            <span class="fr mr10" style="color: blue;" @click.stop="joinSS(item)">申请上车</span>
+            <span
+              class="fr mr10"
+              style="color: blue;"
+              @click.stop="joinSS(item)"
+              v-if="(user.familyMember.uid != item.leader.uid) && showJoinBtn"
+            >申请上车</span>
+            <span
+              class="fr mr10"
+              style="color: #F5B041;"
+              @click.stop="cancelJoinSS(item)"
+              v-if="(item.member.some(el => el.uid == user.familyMember.uid)) && showCancelJoinBtn"
+            >下车</span>
           </div>
         </template>
         <el-row>
@@ -24,12 +35,15 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <ul>
-              <li>111</li>
-              <li>111</li>
-              <li>111</li>
-              <li>111</li>
+            <p>乘客：</p>
+            <ul v-if="item.member.length > 0">
+              <li
+                :class="i.uid == user.familyMember.uid ? 'fl mr10 memberList color-red': 'fl mr10 memberList'"
+                :key="k"
+                v-for="(i, k) in item.member"
+              >{{i.sortNumber}}-{{i.userName}}</li>
             </ul>
+            <span class="ml10" style="color: #999;" v-else>暂无</span>
           </el-col>
         </el-row>
       </el-collapse-item>
@@ -75,11 +89,12 @@
 
 <script lang="ts">
 import Component from "vue-class-component";
-import { State } from "vuex-class";
+import { State, Action } from "vuex-class";
 import { Vue /*, Component, Watch*/ } from "vue-property-decorator";
 import Service from "../api/ss";
 import moment from "moment";
 interface SSItem {
+  _id: string;
   time: string;
   boss: string;
   leader: object;
@@ -89,6 +104,7 @@ interface SSItem {
 })
 export default class Home extends Vue {
   @State user: any;
+  @Action Set_user: any;
   private activeNames: Array<number> = [];
   private dialogVisible = false;
   private ssList: Array<SSItem> = [];
@@ -106,10 +122,21 @@ export default class Home extends Vue {
     boss: [{ required: true, message: "请选择你的SS名称", trigger: "change" }],
     time: [{ required: true, message: "请选择你想打的时间", trigger: "blur" }]
   };
-  private getSSList() {
-    Service.getSSList().then((res: any) => {
-      this.ssList = res;
+  private async getSSList() {
+    const res: any = await Service.getSSList();
+    this.ssList = res;
+    //默认全部展开
+    this.ssList.forEach((i, j) => {
+      this.activeNames.push(j);
     });
+  }
+  private async getUserInfo() {
+    const res: any = await Service.getMemberList({
+      uid: this.user.familyMember.uid
+    });
+    console.log(res, "res");
+    localStorage.setItem("familyMember", JSON.stringify(res[0]));
+    this.Set_user({ ...res[0] });
   }
   mounted() {
     //如果没有登录 非族员强制进入此页面则强制退出
@@ -132,6 +159,7 @@ export default class Home extends Vue {
         Service.delSS(item).then((res: any) => {
           if (res.success) {
             this.$message.success("删除成功");
+            this.getUserInfo();
             this.getSSList();
           } else {
             this.$message.error("删除失败:" + res.msg);
@@ -157,6 +185,7 @@ export default class Home extends Vue {
         Service.doneSS(item).then((res: any) => {
           if (res.success) {
             this.$message.success(res.msg);
+            this.getUserInfo();
             this.getSSList();
           } else {
             this.$message.error("失败:" + res.msg);
@@ -172,20 +201,53 @@ export default class Home extends Vue {
       });
   }
   private joinSS(item: SSItem): void {
-    // console.log(this.user, item);
-    // console.log(moment(new Date().getTime()), '???')
     if (moment(new Date().getTime()) > moment(item.time)) {
       this.$message.error({
         message: "此车已经过期了",
         center: true
       });
+      return;
     }
-    // Service.joinSS({
-    //   uid: this.user.familyMember.uid,
-    //   item: item.leader
-    // }).then(res => {
-    //   console.log(res, "joinres");
-    // });
+    Service.joinSS({
+      uid: this.user.familyMember.uid,
+      _id: item._id //每车的id, mongo生成的
+    }).then((res: any) => {
+      if (res.success) {
+        this.$message.success({
+          message: res.msg,
+          center: true
+        });
+        // 上车成功后刷新用户信息和ss列表
+        this.getUserInfo();
+        this.getSSList();
+      } else {
+        this.$message.error({
+          message: "上车失败：" + res.msg,
+          center: true
+        });
+      }
+    });
+  }
+  private cancelJoinSS(item: SSItem): void {
+    Service.cancelJoinSS({
+      uid: this.user.familyMember.uid,
+      _id: item._id //每车的id, mongo生成的
+    }).then((res: any) => {
+      if (res.success) {
+        this.$message.success({
+          message: res.msg,
+          center: true
+        });
+        // 更新用户信息和ss列表
+        this.getUserInfo();
+        this.getSSList();
+      } else {
+        this.$message.error({
+          message: res.msg,
+          center: true
+        });
+      }
+    });
   }
   private async addSS() {
     // console.log(this.user.familyMember);
@@ -219,7 +281,7 @@ export default class Home extends Vue {
             this.dialogVisible = false;
           } else {
             this.$message.error({
-              message: "添加失败" + res.msg,
+              message: "添加失败：" + res.msg,
               center: true
             });
           }
@@ -235,6 +297,13 @@ export default class Home extends Vue {
       Object.keys(this.user.familyMember).length > 0 &&
       this.user.familyMember.isAdmin
     );
+  }
+  get showJoinBtn(): boolean {
+    return !this.user.familyMember.isApplySS;
+  }
+
+  get showCancelJoinBtn(): boolean {
+    return this.user.familyMember.isApplySS;
   }
 
   // @Watch("myNameLength")
@@ -255,6 +324,9 @@ export default class Home extends Vue {
     bottom: 80px;
     right: 30px;
     z-index: 99;
+  }
+  .memberList {
+    list-style: none;
   }
 }
 </style>

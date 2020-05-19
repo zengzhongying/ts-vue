@@ -64,7 +64,6 @@ export default class Header extends Vue {
     { menuName: "关于作者", authentication: false }
   ];
   //只有登录了的才有权限看到的菜单（只有成员才有权限）
-
   mounted() {
     const userInfo: any = localStorage.getItem("familyMember")
       ? localStorage.getItem("familyMember")
