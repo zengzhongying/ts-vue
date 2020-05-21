@@ -21,8 +21,7 @@
           v-for="(item, index) in showMemuList"
           @click.native="pageChange(item.menuName)"
         >{{item.menuName}}</el-card>
-        <el-card shadow="always" class="my-box-card box-card mb10">
-          <!-- 不显示的音乐播放器 -->
+        <!-- <el-card shadow="always" class="my-box-card box-card mb10">
           <audio
             style="zIndex: 4"
             src="../assets/music/bgm.mp3"
@@ -31,7 +30,7 @@
             autoplay="autoplay"
             id="audio"
           >您的浏览器不支持音乐播放哟</audio>
-        </el-card>
+        </el-card>-->
       </div>
     </el-drawer>
   </div>
